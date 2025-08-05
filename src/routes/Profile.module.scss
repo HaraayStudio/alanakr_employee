@@ -1,0 +1,82 @@
+.profilePage {
+  padding: 18px 4vw 44px 4vw;
+  background: #f7fafd;
+  min-height: 100vh;
+  font-family: 'Inter', sans-serif;
+  width: 100vw;
+ box-sizing: border-box;
+}
+
+.profileHeader {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 22px;
+
+  .avatar {
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #2e9bf5 0%, #90f5d7 100%);
+    color: #fff; display: flex; align-items: center; justify-content: center;
+    font-size: 28px; font-weight: 700; box-shadow: 0 2px 16px #5ac5e813;
+    border: 3px solid #fff;
+  }
+  .empInfo {
+    flex: 1;
+    .name { font-size: 20px; font-weight: 700; color: #192338; }
+    .roleStatus {
+      display: flex; gap: 8px; margin-top: 2px; align-items: center;
+      .role {
+        background: #e9f7f4;
+        color: #1989b4;
+        font-size: 13px;
+        padding: 3px 10px;
+        border-radius: 12px;
+        font-weight: 500;
+        letter-spacing: 0.05em;
+      }
+      .status {
+        font-size: 13px;
+        font-weight: 600;
+        padding: 3px 10px;
+        border-radius: 12px;
+        &.active { background: #d2faea; color: #23b46d; }
+        &.inactive { background: #fde7e7; color: #ef4848; }
+      }
+    }
+  }
+}
+
+.sectionCard {
+  background: #fff;
+  border-radius: 18px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 18px #e7f2fd33;
+  padding: 14px 13px;
+  display: flex; flex-direction: column; gap: 8px;
+}
+
+.sectionRow {
+  display: flex; align-items: center; gap: 13px;
+  font-size: 16px;
+  color: #22253b;
+  font-weight: 500;
+  padding: 3px 0;
+  svg { color: #4aa1f2; }
+}
+
+.loading, .error {
+  text-align: center;
+  margin: 80px 0 20px 0;
+  color: #999;
+  font-size: 16px;
+}
+
+@media (min-width: 700px) {
+  .profilePage {
+    padding: 32px 12vw 64px 12vw;
+    max-width: 480px;
+    margin: 0 auto;
+  }
+  .profileHeader .avatar { width: 76px; height: 76px; font-size: 36px; }
+}

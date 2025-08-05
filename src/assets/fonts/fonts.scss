@@ -1,0 +1,26 @@
+// src/assets/fonts/fonts.scss
+
+@font-face {
+  font-family: 'Arial';
+  src: url('./ARIAL.TTF') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Arial Bold';
+  src: url('./ARIALBD.TTF') format('truetype');
+  font-weight: bold;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Arial Italic';
+  src: url('./ARIALI.TTF') format('truetype');
+  font-weight: normal;
+  font-style: italic;
+}
+@font-face {
+  font-family: 'Arial Bold Italic';
+  src: url('./ARIALBI.TTF') format('truetype');
+  font-weight: bold;
+  font-style: italic;
+}

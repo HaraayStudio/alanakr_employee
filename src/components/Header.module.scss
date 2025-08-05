@@ -1,0 +1,20 @@
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 16px 6px 16px;
+  background: none;
+  .logo {
+    height: 36px;
+    width: auto;
+  }
+  .menuBtn {
+    background: #f5f8fc;
+    border: none;
+    border-radius: 50%;
+    padding: 7px;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 2px 8px rgba(33, 150, 243, 0.08);
+  }
+}

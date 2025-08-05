@@ -1,0 +1,387 @@
+// Mobile-optimized JobSheetPreview styles
+
+.schematicWrapper {
+  width: 220px;
+  height: 350px;
+  max-width: 97vw;
+  margin: 0 auto;
+  
+  @media (max-width: 768px) {
+    width: 200px;
+    height: 320px;
+  }
+  
+  @media (max-width: 500px) {
+    width: 180px;
+    height: 280px;
+  }
+}
+
+.schematicSvg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  background: #e7e9ed;
+  border-radius: 16px;
+  
+  @media (max-width: 500px) {
+    border-radius: 12px;
+  }
+}
+
+.closeBtn {
+  position: absolute;
+  top: 16px;
+  right: 20px;
+  z-index: 10;
+  background: rgba(255, 255, 255, 0.95);
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #6a768b;
+  transition: all 0.2s;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  
+  &:hover {
+    background: rgba(255, 255, 255, 1);
+    color: #1977d7;
+    transform: scale(1.05);
+  }
+  
+  @media (max-width: 500px) {
+    width: 36px;
+    height: 36px;
+    top: 12px;
+    right: 16px;
+  }
+}
+
+.noJobs {
+  color: #777;
+  padding: 2rem;
+  text-align: center;
+  font-style: italic;
+  
+  @media (max-width: 500px) {
+    padding: 1.5rem;
+    font-size: 0.9rem;
+  }
+}
+
+.imageWrapper {
+  position: relative;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 1px 6px #97d4ff44;
+}
+
+.jobImg {
+  width: 92px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 4px;
+  border: 1px solid #b4d4f5;
+  cursor: pointer;
+  transition: transform 0.2s;
+  
+  &:hover {
+    transform: scale(1.02);
+  }
+  
+  @media (max-width: 768px) {
+    width: 80px;
+    height: 70px;
+  }
+  
+  @media (max-width: 500px) {
+    width: 70px;
+    height: 60px;
+  }
+}
+
+.dimensionsRow {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+  
+  @media (max-width: 500px) {
+    gap: 4px;
+    margin-top: 6px;
+  }
+}
+
+.dimItem {
+  background: #e8f2ff;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  
+  @media (max-width: 500px) {
+    font-size: 0.75rem;
+    padding: 3px 6px;
+  }
+}
+
+.dimLabel {
+  color: #1977d7;
+  font-weight: 600;
+}
+
+.dimValue {
+  color: #283046;
+  font-weight: 500;
+}
+
+.imagePreviewContainer {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  padding: 20px;
+  
+  @media (max-width: 500px) {
+    padding: 10px;
+  }
+}
+
+.imageCloseBtn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 10;
+  background: rgba(0, 0, 0, 0.7);
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: white;
+  transition: all 0.2s;
+  
+  &:hover {
+    background: rgba(0, 0, 0, 0.9);
+    transform: scale(1.1);
+  }
+  
+  @media (max-width: 500px) {
+    width: 36px;
+    height: 36px;
+    top: 12px;
+    right: 12px;
+  }
+}
+
+.imagePreviewBig {
+  max-width: 90vw;
+  max-height: 80vh;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(25, 119, 215, 0.3);
+  border: 3px solid #fff;
+  
+  @media (max-width: 768px) {
+    max-width: 95vw;
+    max-height: 85vh;
+    border-radius: 8px;
+    border: 2px solid #fff;
+  }
+  
+  @media (max-width: 500px) {
+    max-width: 98vw;
+    max-height: 90vh;
+    border-radius: 6px;
+  }
+}
+
+// Enhanced mobile responsiveness
+@media (max-width: 768px) {
+  .previewBox {
+    width: 95vw;
+    max-height: 90vh;
+    border-radius: 16px;
+  }
+  
+  .header {
+    padding: 20px 20px 14px 20px;
+    border-radius: 16px 16px 0 0;
+    
+    .sheetTitle {
+      font-size: 1.5rem;
+      letter-spacing: 1.8px;
+    }
+    
+    .logo {
+      height: 50px;
+    }
+  }
+  
+  .infoGrid {
+    padding: 12px 20px 16px 20px;
+    font-size: 1rem;
+    gap: 6px 14px;
+  }
+  
+  .jobsArea {
+    padding: 20px 16px 8px 16px;
+    gap: 20px;
+  }
+  
+  .jobRow {
+    flex-direction: column;
+    gap: 16px;
+    padding: 14px;
+  }
+  
+  .leftCol {
+    min-width: 100%;
+    max-width: 100%;
+  }
+  
+  .remarksSection {
+    margin: 12px 16px 0 16px;
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 500px) {
+  .previewBox {
+    width: 98vw;
+    max-height: 95vh;
+    border-radius: 12px;
+    padding: 0 0 16px 0;
+  }
+  
+  .header {
+    padding: 16px 16px 12px 16px;
+    border-radius: 12px 12px 0 0;
+    
+    .sheetTitle {
+      font-size: 1.3rem;
+      letter-spacing: 1.5px;
+    }
+    
+    .logo {
+      height: 45px;
+    }
+  }
+  
+  .infoGrid {
+    padding: 10px 16px 14px 16px;
+    font-size: 0.9rem;
+    flex-direction: column;
+    gap: 8px;
+    
+    div {
+      gap: 6px;
+      
+      div {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+    }
+    
+    b {
+      font-size: 0.85rem;
+    }
+    
+    span {
+      font-size: 0.9rem;
+    }
+  }
+  
+  .jobsArea {
+    padding: 16px 12px 6px 12px;
+    gap: 16px;
+  }
+  
+  .jobRow {
+    padding: 12px;
+    gap: 14px;
+  }
+  
+  .matRow {
+    font-size: 1rem;
+    margin-top: 8px;
+  }
+  
+  .rightCol {
+    .imgBox {
+      min-height: 70px;
+      padding: 4px 6px;
+      gap: 6px;
+    }
+    
+    .descRow {
+      font-size: 1rem;
+      margin-top: 4px;
+    }
+    
+    .remarkRow {
+      font-size: 0.95rem;
+    }
+  }
+  
+  .remarksSection {
+    margin: 10px 12px 0 12px;
+    font-size: 0.95rem;
+    padding: 12px 16px;
+    
+    b {
+      font-size: 0.9rem;
+    }
+  }
+}
+
+// Touch device optimizations
+@media (hover: none) and (pointer: coarse) {
+  .closeBtn, .imageCloseBtn {
+    width: 44px;
+    height: 44px;
+  }
+  
+  .jobImg {
+    width: 100px;
+    height: 85px;
+  }
+  
+  .dimItem {
+    padding: 6px 10px;
+    font-size: 0.85rem;
+  }
+}
+
+// Landscape mobile optimization
+@media (max-width: 900px) and (orientation: landscape) {
+  .previewBox {
+    max-height: 95vh;
+  }
+  
+  .jobRow {
+    flex-direction: row;
+    
+    .leftCol {
+      min-width: 200px;
+      max-width: 220px;
+    }
+  }
+  
+  .schematicWrapper {
+    width: 180px;
+    height: 260px;
+  }
+}
