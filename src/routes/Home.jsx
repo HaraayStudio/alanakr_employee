@@ -113,7 +113,7 @@ export default function HomePage() {
 
       {/* See all */}
       <div className={styles.seeAllWrapper}>
-        <button className={styles.seeAllBtn}>See all</button>
+        {/* <button className={styles.seeAllBtn}>See all</button> */}
       </div>
 
       <JobSheetDetailPopup
@@ -123,12 +123,12 @@ export default function HomePage() {
   onNext={() => {/* logic for next job, or just close */}}
   onBack={() => {/* logic for previous job, or just close */}}
 />
-<JobSheetPopup
+{/* <JobSheetPopup
   open={showAddJobPopup}
   onClose={() => setShowAddJobPopup(false)}
   preSelectedEmployee={employee}
-  onSuccess={() => {/* Optionally re-fetch data here */}}
-/>
+  onSuccess={() => }
+/> */}
 
     </div>
   );

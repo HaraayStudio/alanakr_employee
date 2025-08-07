@@ -1,12 +1,18 @@
+@import url("https://fonts.googleapis.com/css2?family=Wix+Madefor+Text:ital,wght@0,400..800;1,400..800&display=swap");
 $primary: #3178fa;
 $bg: #f8fafd;
 $shadow: 0 8px 48px 0 rgba(44, 130, 201, 0.13);
 $radius: 22px;
-
+:root {
+   font-family: "Wix Madefor Text", sans-serif !important;
+}
 .overlay {
   position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(43, 54, 76, 0.22);
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(38, 42, 51, 0.281);
   z-index: 2000;
   display: flex;
   align-items: center;
@@ -16,13 +22,16 @@ $radius: 22px;
 .popup {
   background: #fff;
   border-radius: $radius;
-  box-shadow: $shadow;
+  // box-shadow: $shadow;
   min-width: 370px;
   width: 95vw;
   max-width: 510px;
   padding: 0 0 22px 0;
   position: relative;
-  animation: pop-in .21s cubic-bezier(.53,1.43,.6,.95);
+  animation: pop-in 0.21s cubic-bezier(0.53, 1.43, 0.6, 0.95);
+
+  border-radius: 20px;
+  background: var(--Colour-4th-Colour, #edf3ff);
   @media (max-width: 500px) {
     min-width: unset;
     max-width: 99vw;
@@ -31,17 +40,27 @@ $radius: 22px;
 }
 
 @keyframes pop-in {
-  0% { transform: scale(0.94); opacity: 0; }
-  100% { transform: scale(1); opacity: 1; }
+  0% {
+    transform: scale(0.94);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 .close {
   position: absolute;
-  right: 22px; top: 20px;
+  right: 22px;
+  top: 10px;
   font-size: 28px;
-  color: #6a768b;
+  color: #ffffff;
   cursor: pointer;
-  &:hover { color: #111b2b; }
+  z-index: 99;
+  &:hover {
+    color: #111b2b;
+  }
 }
 
 .header {
@@ -50,12 +69,14 @@ $radius: 22px;
   gap: 12px;
   padding: 26px 26px 6px 26px;
   border-bottom: 1.5px solid #ecf0f5;
-  @media (max-width: 500px) { padding: 18px 10px 6px 10px; }
+  @media (max-width: 500px) {
+    padding: 18px 10px 6px 10px;
+  }
 }
 
 .sr {
-  background: $primary;
-  color: #fff;
+  // background: $primary;
+  color: #252424;
   font-size: 19px;
   font-weight: 600;
   padding: 0 12px;
@@ -67,31 +88,55 @@ $radius: 22px;
   display: flex;
   align-items: center;
   font-size: 14px;
-  color: #7a8799;
+  color: #383a3d;
+  width: 100%;
+  text-align: right;
   gap: 5px;
-  margin-left: auto;
+  // margin-left: auto;
+  color: var(--Colours-Heading, #070708);
+  font-feature-settings: "liga" off, "clig" off;
+  // font-family: "Wix Madefor Text";
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 150%; /* 18px */
+  text-align: right;
+  justify-content: end;
+  padding-right: 20px;
 }
 
 .row {
   display: flex;
   gap: 20px;
   padding: 18px 26px 0 26px;
-  @media (max-width: 500px) { flex-direction: column; gap: 4px; padding: 10px 10px 0 10px; }
-  > div { flex: 1; }
+  @media (max-width: 500px) {
+    flex-direction: row;
+    gap: 4px;
+    padding: 10px 10px 0 10px;
+  }
+  > div {
+    flex: 1;
+  }
 }
 
 .label {
-  color: #7d8faa;
-  font-size: 12px;
-  margin-bottom: 2px;
+color: var(--Colours-Sub-Heading, #353536be);
+font-feature-settings: 'liga' off, 'clig' off;
+font-family: "Wix Madefor Text";
+font-size: 14px;
+font-style: normal;
+font-weight: 400;
+line-height: 150%; /* 21px */
 }
 
 .value {
-  font-size: 15.5px;
-  color: #283046;
-  font-weight: 500;
-  margin-bottom: 7px;
-  word-break: break-word;
+ color: var(--Colours-Heading, #070708);
+font-feature-settings: 'liga' off, 'clig' off;
+font-family: "Wix Madefor Text";
+font-size: 16px;
+font-style: normal;
+font-weight: 500;
+line-height: 150%; /* 24px */
 }
 
 .box {
@@ -99,9 +144,16 @@ $radius: 22px;
   background: $bg;
   border-radius: 13px;
   padding: 14px 14px 8px 14px;
-  @media (max-width: 500px) { margin: 9px 7px 0 7px; }
+  @media (max-width: 500px) {
+    margin: 9px 7px 0 7px;
+  }
 }
 
+.jobsPreviewBox{
+ 
+  border-radius: 10px;
+background: var(--Colour-3rd-Colour, #D4E2FF);
+}
 .inputLike {
   background: #f1f4fa;
   border-radius: 6px;
@@ -118,10 +170,13 @@ $radius: 22px;
   justify-content: flex-end;
   gap: 16px;
   margin: 22px 26px 0 26px;
-  @media (max-width: 500px) { margin: 14px 10px 0 10px; }
+  @media (max-width: 500px) {
+    margin: 14px 10px 0 10px;
+  }
 }
 
-.backBtn, .nextBtn {
+.backBtn,
+.nextBtn {
   font-size: 15px;
   font-weight: 500;
   padding: 8px 28px;
@@ -134,12 +189,16 @@ $radius: 22px;
 .backBtn {
   background: #eceef2;
   color: #465370;
-  &:hover { background: #dbe3eb; }
+  &:hover {
+    background: #dbe3eb;
+  }
 }
 .nextBtn {
-  background: linear-gradient(93deg, #4da6ff 0%, #35e4a3 97%);
+  // background: linear-gradient(93deg, #4da6ff 0%, #35e4a3 97%);
   color: #fff;
-  &:hover { opacity: .90; }
+  &:hover {
+    opacity: 0.9;
+  }
 }
 .previewBtn {
   background: linear-gradient(90deg, #2196f3 0%, #70e2b4 100%);
@@ -153,7 +212,9 @@ $radius: 22px;
   cursor: pointer;
   box-shadow: 0 1px 7px #72a2f122;
   transition: background 0.14s;
-  &:hover { background: linear-gradient(90deg, #1977d7 0%, #51e9ac 100%); }
+  &:hover {
+    background: linear-gradient(90deg, #1977d7 0%, #51e9ac 100%);
+  }
 }
 
 // ----- JobSheetPreview modal SCSS ------
@@ -161,7 +222,7 @@ $radius: 22px;
 .backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(12,24,55,0.14);
+  background: rgba(66, 59, 59, 0.14);
   z-index: 3000;
   display: flex;
   align-items: center;
@@ -169,34 +230,61 @@ $radius: 22px;
 }
 .previewBox {
   background: #fff;
-  border-radius: 22px;
-  box-shadow: 0 12px 56px #2183b933, 0 2px 12px #337abb11;
-  width: 850px; max-width: 99vw; max-height: 99vh; overflow-y: auto; position: relative;
+  border-radius: 20px;
+
+  width: 850px;
+  max-width: 99vw;
+  max-height: 99vh;
+  overflow-y: auto;
+  position: relative;
   padding: 0 0 26px 0;
-  animation: popupIn 0.14s cubic-bezier(.35,1.35,.52,1.03);
+  animation: popupIn 0.14s cubic-bezier(0.35, 1.35, 0.52, 1.03);
   display: flex;
   flex-direction: column;
-  @media (max-width: 1000px) { width: 99vw; min-width: unset; padding: 0; }
+  @media (max-width: 1000px) {
+    width: 99vw;
+    min-width: unset;
+    padding: 0;
+  }
 }
 .closeBtn {
-  position: absolute; top: 22px; right: 34px; z-index: 2;
-  font-size: 34px; background: none; border: none; color: #aaa; cursor: pointer;
-  font-weight: 700; transition: color 0.15s;
-  &:hover { color: #1977d7; }
+  position: absolute;
+  top: 22px;
+  right: 34px;
+  z-index: 2;
+  font-size: 34px;
+  background: none;
+  border: none;
+  color: #aaa;
+  cursor: pointer;
+  font-weight: 700;
+  transition: color 0.15s;
+  &:hover {
+    color: #1977d7;
+  }
 }
 .header {
-  background: linear-gradient(94deg, #1977d7 0%, #6ac9ff 100%);
+  background-color: rgba(255, 255, 255, 0.329);
+  // background: linear-gradient(94deg, #1977d7 0%, #6ac9ff 100%);
   border-radius: 22px 22px 0 0;
   padding: 30px 38px 18px 34px;
-  display: flex; justify-content: space-between; align-items: flex-start;
-  position: sticky; top: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  position: sticky;
+  top: 0;
   .sheetTitle {
-    color: #fff; font-size: 1.7rem; font-weight: 600; letter-spacing: 2.2px;
-    font-family: 'Inter', Arial, sans-serif;
+    color: #fff;
+    font-size: 1.7rem;
+    font-weight: 600;
+    letter-spacing: 2.2px;
+    font-family: "Inter", Arial, sans-serif;
     text-shadow: 0 1px 8px #ffffff22;
   }
   .logo {
-    height: 58px; object-fit: contain; filter: drop-shadow(0 1px 8px #87cefa88);
+    height: 58px;
+    object-fit: contain;
+    filter: drop-shadow(0 1px 8px #87cefa88);
   }
 }
 .infoGrid {
@@ -206,53 +294,109 @@ $radius: 22px;
   background: #f8fbff;
   border-radius: 0 0 14px 14px;
   padding: 15px 38px 20px 38px;
-  font-size: 1.18rem; color: #0a3159; font-family: 'Inter', Arial, sans-serif;
+  font-size: 1.18rem;
+  color: #0a3159;
+  font-family: "Inter", Arial, sans-serif;
   margin-bottom: 10px;
   border-bottom: 1.5px solid #e4e9ef;
   justify-content: space-evenly;
   width: 100%;
-  div{
+  div {
     display: flex;
     justify-content: start;
     align-content: start;
-    flex-direction: column; gap: 10px;
-    div{
+    flex-direction: column;
+    gap: 10px;
+    div {
       display: flex;
       flex-direction: row;
     }
   }
-  b { color: #1977d7; font-size: 1.03em;}
-  span { color: #272b39; font-weight: 500;}
+  b {
+    color: #1977d7;
+    font-size: 1.03em;
+  }
+  span {
+    color: #272b39;
+    font-weight: 500;
+  }
 }
 .jobsArea {
   padding: 24px 36px 8px 36px;
-  display: flex; flex-direction: column; gap: 24px;
-  @media (max-width: 650px) { padding: 13px 6vw 3px 6vw; }
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  @media (max-width: 650px) {
+    padding: 13px 6vw 3px 6vw;
+  }
 }
 .jobRow {
-  display: flex; gap: 34px; align-items: stretch;
-  background: #f4f8fd; border-radius: 13px; box-shadow: 0 1px 7px #b9e6fb22;
+  display: flex;
+  gap: 34px;
+  align-items: stretch;
+  background: #f4f8fd;
+  border-radius: 13px;
+  box-shadow: 0 1px 7px #b9e6fb22;
   padding: 17px 17px;
-  @media (max-width: 900px) { flex-direction: column; gap: 13px; }
+  @media (max-width: 900px) {
+    flex-direction: column;
+    gap: 13px;
+  }
 }
 .leftCol {
-  min-width: 220px; max-width: 260px; flex: 1.2; display: flex; flex-direction: column; align-items: center; gap: 7px;
+  min-width: 220px;
+  max-width: 260px;
+  flex: 1.2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
   justify-content: flex-start;
 }
 .matRow {
-  color: #2873c9; font-size: 1.08rem; margin-top: 11px; text-align: center;
+  color: #2873c9;
+  font-size: 1.08rem;
+  margin-top: 11px;
+  text-align: center;
 }
 .rightCol {
-  flex: 3; display: flex; flex-direction: column; gap: 12px; justify-content: flex-start;
+  flex: 3;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  justify-content: flex-start;
   .imgBox {
-    min-height: 85px; background: #dde9f7; border-radius: 6px;
-    display: flex; gap: 8px; align-items: center; justify-content: flex-start;
+    min-height: 85px;
+    background: #dde9f7;
+    border-radius: 6px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    justify-content: flex-start;
     padding: 6px 8px;
-    .jobImg { width: 92px; height: 80px; object-fit: cover; border-radius: 4px; border: 1px solid #b4d4f5; box-shadow: 0 1px 6px #97d4ff44;}
-    .noImg { color: #9cb0c9; font-size: 1.10rem; font-weight: 500; }
+    .jobImg {
+      width: 92px;
+      height: 80px;
+      object-fit: cover;
+      border-radius: 4px;
+      border: 1px solid #b4d4f5;
+      box-shadow: 0 1px 6px #97d4ff44;
+    }
+    .noImg {
+      color: #9cb0c9;
+      font-size: 1.1rem;
+      font-weight: 500;
+    }
   }
-  .descRow { color: #16487c; font-size: 1.12rem; margin-top: 6px; }
-  .remarkRow { color: #237a42; font-size: 1.09rem; }
+  .descRow {
+    color: #16487c;
+    font-size: 1.12rem;
+    margin-top: 6px;
+  }
+  .remarkRow {
+    color: #237a42;
+    font-size: 1.09rem;
+  }
 }
 .remarksSection {
   background: #f8faff;
@@ -261,29 +405,59 @@ $radius: 22px;
   font-size: 1.13rem;
   color: #295385;
   padding: 15px 20px 15px 20px;
-  b { color: #1977d7; font-size: 1.07rem;}
-  @media (max-width: 650px) { margin: 11px 6vw 0 6vw; }
+  b {
+    color: #1977d7;
+    font-size: 1.07rem;
+  }
+  @media (max-width: 650px) {
+    margin: 11px 6vw 0 6vw;
+  }
 }
 @keyframes popupIn {
-  from { opacity: 0; transform: translateY(32px) scale(0.97);}
-  to { opacity: 1; transform: translateY(0) scale(1);}
+  from {
+    opacity: 0;
+    transform: translateY(32px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 @media (max-width: 1000px) {
-  .previewBox { width: 99vw; min-width: unset; padding: 0; }
-  .header { padding: 21px 3vw 12px 3vw; }
-  .infoGrid { grid-template-columns: 1fr 1fr; padding: 12px 2vw 14px 2vw; font-size: 0.98rem;}
-  .jobsArea { padding: 9px 2vw 7px 2vw;}
-  .remarksSection { margin: 11px 2vw 0 2vw; }
+  .previewBox {
+    width: 99vw;
+    min-width: unset;
+    padding: 0;
+  }
+  .header {
+    padding: 21px 3vw 12px 3vw;
+  }
+  .infoGrid {
+    grid-template-columns: 1fr 1fr;
+    padding: 12px 2vw 14px 2vw;
+    font-size: 0.98rem;
+  }
+  .jobsArea {
+    padding: 9px 2vw 7px 2vw;
+  }
+  .remarksSection {
+    margin: 11px 2vw 0 2vw;
+  }
 }
 @media (max-width: 600px) {
-  .leftCol { min-width: 90vw; max-width: 100vw; }
-  .jobRow { padding: 8px 2vw; }
+  .leftCol {
+    min-width: 90vw;
+    max-width: 100vw;
+  }
+  .jobRow {
+    padding: 8px 2vw;
+  }
 }
 .imagePreviewBackdrop {
   position: fixed;
   z-index: 4000;
   inset: 0;
-  background: rgba(18,21,35,0.73);
+  background: rgba(18, 21, 35, 0.73);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -296,13 +470,16 @@ $radius: 22px;
   display: block;
   margin: 0 auto;
   border: 5px solid #fff;
-  animation: popupIn 0.14s cubic-bezier(.35,1.35,.52,1.03);
+  animation: popupIn 0.14s cubic-bezier(0.35, 1.35, 0.52, 1.03);
 }
 // Add these styles to your existing SCSS file
 
 .jobsPreview {
-  margin: 20px 26px 0 26px;
-  @media (max-width: 500px) { margin: 15px 10px 0 10px; }
+  margin: 20px 26px 20px 26px;
+  
+  @media (max-width: 500px) {
+    margin: 15px 10px 0 10px;
+  }
 }
 
 .jobsTitle {
@@ -314,16 +491,15 @@ $radius: 22px;
   border-bottom: 2px solid #e5ebf7;
 }
 
-.jobItemCard {
-  background: #f8fbff;
-  border: 1px solid #e5ebf7;
-  border-radius: 12px;
-  margin-bottom: 16px;
+.jobItemCard {margin-top: 15px;
+ border-radius: 10px;
+background: var(--Colour-3rd-Colour, #D4E2FF);
   overflow: hidden;
 }
 
 .jobHeader {
-  background: linear-gradient(90deg, #1977d7 0%, #70e2b4 100%);
+  background-color: grey;
+  // background: linear-gradient(90deg, #1977d7 0%, #70e2b4 100%);
   color: white;
   padding: 12px 16px;
   display: flex;
@@ -332,13 +508,23 @@ $radius: 22px;
 }
 
 .jobNum {
-  font-weight: 600;
-  font-size: 1rem;
+color: var(--Colours-Sub-Heading, #ffffff);
+font-feature-settings: 'liga' off, 'clig' off;
+font-family: "Wix Madefor Text";
+font-size: 14px;
+font-style: normal;
+font-weight: 600;
+line-height: 150%; /* 21px */
 }
 
 .material {
-  font-size: 0.9rem;
-  opacity: 0.9;
+color: var(--Colours-Sub-Heading, #353536);
+font-feature-settings: 'liga' off, 'clig' off;
+font-family: "Wix Madefor Text";
+font-size: 16px;
+font-style: normal;
+font-weight: 600;
+line-height: 150%; /* 21px */
 }
 
 .jobContent {
@@ -384,7 +570,11 @@ $radius: 22px;
   background: #f1f4fa;
   padding: 8px 12px;
   border-radius: 6px;
+  white-space: normal;     // ✅ allows line breaks
+  word-break: break-word;  // ✅ breaks long words to wrap
+  overflow: hidden;
 }
+
 
 .dimensionsGrid {
   display: grid;
@@ -435,7 +625,7 @@ $radius: 22px;
   border: 1px solid #e5ebf7;
   cursor: pointer;
   transition: transform 0.2s;
-  
+
   &:hover {
     transform: scale(1.05);
   }
@@ -447,19 +637,19 @@ $radius: 22px;
   gap: 12px;
   margin-top: 8px;
   flex-wrap: wrap;
-  
+
   .dimItem {
     background: #e8f2ff;
     padding: 4px 8px;
     border-radius: 4px;
     font-size: 0.85rem;
-    
+
     .dimLabel {
       color: #1977d7;
       font-weight: 600;
       margin-right: 4px;
     }
-    
+
     .dimValue {
       color: #283046;
       font-weight: 500;
@@ -475,29 +665,29 @@ $radius: 22px;
     max-height: 90vh;
     overflow-y: auto;
   }
-  
+
   .jobContent {
     padding: 12px;
   }
-  
+
   .schematicCol {
     flex: none;
   }
-  
+
   .dimensionsGrid {
     grid-template-columns: 1fr;
   }
-  
+
   .previewBox {
     width: 98vw;
     max-height: 95vh;
   }
-  
+
   .jobRow {
     flex-direction: column;
     gap: 15px;
   }
-  
+
   .leftCol {
     min-width: 100%;
     max-width: 100%;
@@ -508,17 +698,66 @@ $radius: 22px;
   .jobsPreview {
     margin: 15px 8px 0 8px;
   }
-  
+
   .jobContent {
     padding: 8px;
   }
-  
+
   .jobsArea {
     padding: 15px 8px;
   }
-  
+
   .dimensionsRow {
     flex-direction: column;
     gap: 6px;
   }
+}
+// SizeSchematic.module.scss
+.schematicContainer {
+  width: 100%;
+  height: 300px;
+  max-width: 100%;
+  margin: 20px auto;
+  background: #e8e9eb;
+  border-radius: 8px;
+  padding: 10px;
+}
+
+.svgCanvas {
+  display: block;
+}
+
+.measurementBox {
+  fill: white;
+  stroke: #333;
+  stroke-width: 1.5;
+}
+
+.measurementText {
+  text-anchor: middle;
+  font-size: 14px;
+  font-weight: 500;
+  fill: #333;
+  font-family: Arial, sans-serif;
+}
+
+.arrowLine {
+  stroke: #333;
+  stroke-width: 1.5;
+}
+
+.centralFrame {
+  fill: none;
+  stroke: #666;
+  stroke-width: 1;
+  stroke-dasharray: 2, 2;
+}
+
+.jobNumber {
+  text-anchor: middle;
+  font-size: 36px;
+  font-weight: bold;
+  fill: #c5c9d6;
+  opacity: 0.7;
+  font-family: Arial, sans-serif;
 }

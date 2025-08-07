@@ -204,7 +204,7 @@ export default function JobSheetPreview({ open, jobSheet, onClose }) {
         <div className={styles.infoGrid}>
           <div>
             <div>
-              <b>CLIENT NAME :</b> 
+              <b>CLIENT w NAME :</b> 
               <span>{client?.name || jobSheet.clientName || "--"}</span>
             </div>
             <div>
