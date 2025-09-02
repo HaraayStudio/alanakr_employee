@@ -21,6 +21,7 @@ export default function HomePage() {
       setError("");
       try {
         const res = await api.get("/employees/getemployeedata");
+       sessionStorage.setItem("employee", JSON.stringify(res.data.data));
         setEmployee(res.data.data);
         setEmploye(res.data.data);
         console.log(res.data.data);
@@ -123,12 +124,12 @@ export default function HomePage() {
   onNext={() => {/* logic for next job, or just close */}}
   onBack={() => {/* logic for previous job, or just close */}}
 />
-{/* <JobSheetPopup
+<JobSheetPopup
   open={showAddJobPopup}
   onClose={() => setShowAddJobPopup(false)}
   preSelectedEmployee={employee}
-  onSuccess={() => }
-/> */}
+  
+/>
 
     </div>
   );
