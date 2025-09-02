@@ -587,14 +587,14 @@ export default function JobSheetPopup({ open, onClose, preSelectedEmployee, onSu
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!form.clientId || !form.employeeId || !form.date) {
+    if (!form.employeeId || !form.date) {
       alert("Please fill all required fields.");
       return;
     }
     setLoading(true);
     try {
       const jobSheetData = {
-        client: { id: parseInt(form.clientId) },
+        // client: { id: parseInt(form.clientId) },
         employee: { id: parseInt(form.employeeId) },
         clientName: form.clientName || "",
         contactPerson: form.contactPerson || "",
@@ -664,7 +664,7 @@ export default function JobSheetPopup({ open, onClose, preSelectedEmployee, onSu
           <div className={styles.section}>
             <h3>Basic Information</h3>
             <div className={styles.formGrid}>
-              <div className={styles.field}>
+              {/* <div className={styles.field}>
                 <label>
                   Client ID <span className={styles.required}>*</span>
                 </label>
@@ -674,9 +674,9 @@ export default function JobSheetPopup({ open, onClose, preSelectedEmployee, onSu
                   value={form.clientId}
                   onChange={handleChange}
                   placeholder="Enter client ID"
-                  required
+                  // required
                 />
-              </div>
+              </div> */}
               <div className={styles.field}>
                 <label>
                   Employee ID <span className={styles.required}>*</span>
