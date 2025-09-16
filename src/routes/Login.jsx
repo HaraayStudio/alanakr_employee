@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import styles from "./Login.module.scss";
 import logo from "../assets/logo.png";
 import { useData } from "../context/dataContext"; 
-
+import { useNavigate } from "react-router-dom";
 export default function Login() {
   const { handleLogin } = useData(); // <-- Use context
   const [formData, setFormData] = useState({ username: "", password: "" });
@@ -11,7 +11,7 @@ export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [apiError, setApiError] = useState(""); // Add to show API errors
-
+const navigate = useNavigate();
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -50,7 +50,8 @@ export default function Login() {
 
       if (res.success) {
         // Redirect to dashboard, etc.
-      window.location.href = "/home";
+      // window.location.href = "/home";
+      navigate("/home");
         console.log(res);
         
       } else {
