@@ -48,7 +48,7 @@ export default function HomePage() {
         <div className={styles.statCard}>
           <div>Last Jobsheet</div>
           <div className={styles.statValue}>
-            {employee?.jobSheets?.[0]?.srNumber || "-"}
+         JB No :   {employee?.jobSheets?.[0]?.srNumber || "-"}
           </div>
         </div>
       </div>
