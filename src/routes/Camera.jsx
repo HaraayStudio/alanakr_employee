@@ -1,8 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Camera, MapPin, Clock, CheckCircle, XCircle, AlertCircle, Settings } from 'lucide-react';
+import styles from './Camera.module.scss';
 
 const CheckInCheckoutSystem = () => {
-  const [step, setStep] = useState('initial'); // initial, permissions, camera, preview, success
+  const [step, setStep] = useState('initial');
   const [actionType, setActionType] = useState(null);
   const [permissionStatus, setPermissionStatus] = useState({ camera: 'prompt', location: 'prompt' });
   const [capturedImage, setCapturedImage] = useState(null);
@@ -16,10 +17,47 @@ const CheckInCheckoutSystem = () => {
   const canvasRef = useRef(null);
   const streamRef = useRef(null);
 
-  const handleStartAction = (type) => {
+  const checkPermissions = async () => {
+    try {
+      const cameraPermission = await navigator.permissions.query({ name: 'camera' });
+      const locationPermission = await navigator.permissions.query({ name: 'geolocation' });
+      
+      return {
+        camera: cameraPermission.state,
+        location: locationPermission.state
+      };
+    } catch (err) {
+      return { camera: 'prompt', location: 'prompt' };
+    }
+  };
+
+  const handleStartAction = async (type) => {
     setActionType(type);
     setError('');
-    setStep('permissions');
+    
+    // Check if we already have permissions
+    const permissions = await checkPermissions();
+    
+    if (permissions.camera === 'granted' && permissions.location === 'granted') {
+      // Already have permissions, go straight to camera
+      try {
+        const position = await requestLocationPermission();
+        const { latitude, longitude } = position.coords;
+        setLocation({ latitude, longitude });
+        
+        const addr = await getAddressFromCoords(latitude, longitude);
+        setAddress(addr);
+        setTimestamp(new Date().toISOString());
+        
+        await startCamera();
+        setStep('camera');
+      } catch (err) {
+        setStep('permissions');
+      }
+    } else {
+      // Need to request permissions
+      setStep('permissions');
+    }
   };
 
   const requestCameraPermission = async () => {
@@ -31,7 +69,6 @@ const CheckInCheckoutSystem = () => {
         video: { facingMode: 'user', width: 1280, height: 720 }
       });
       
-      // Stop the stream immediately - we just wanted to get permission
       stream.getTracks().forEach(track => track.stop());
       
       setPermissionStatus(prev => ({ ...prev, camera: 'granted' }));
@@ -93,29 +130,23 @@ const CheckInCheckoutSystem = () => {
   const handleRequestBothPermissions = async () => {
     setError('');
     
-    // Request camera first
     const cameraGranted = await requestCameraPermission();
     if (!cameraGranted) return;
     
-    // Then request location
     try {
       const position = await requestLocationPermission();
       const { latitude, longitude } = position.coords;
       setLocation({ latitude, longitude });
       
-      // Get address
       const addr = await getAddressFromCoords(latitude, longitude);
       setAddress(addr);
       
-      // Set timestamp
       setTimestamp(new Date().toISOString());
       
-      // Both permissions granted, proceed to camera
       await startCamera();
       setStep('camera');
       
     } catch (err) {
-      // Location failed, but don't stop the process
       console.error('Location error:', err);
     }
   };
@@ -139,7 +170,6 @@ const CheckInCheckoutSystem = () => {
   };
 
   const getAddressFromCoords = async (lat, lng) => {
-    // Mock geocoding - Replace with your backend API
     return `${lat.toFixed(4)}°N, ${lng.toFixed(4)}°E`;
   };
 
@@ -153,10 +183,8 @@ const CheckInCheckoutSystem = () => {
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
     
-    // Draw video frame
     ctx.drawImage(video, 0, 0);
     
-    // Add overlay with address and time
     const overlayHeight = 120;
     ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
     ctx.fillRect(0, canvas.height - overlayHeight, canvas.width, overlayHeight);
@@ -169,13 +197,11 @@ const CheckInCheckoutSystem = () => {
     ctx.fillText(`📍 ${address}`, 20, canvas.height - 55);
     ctx.fillText(`🕒 ${new Date(timestamp).toLocaleString()}`, 20, canvas.height - 25);
     
-    // Convert to blob
     canvas.toBlob((blob) => {
       const url = URL.createObjectURL(blob);
       setCapturedImage({ blob, url });
       setStep('preview');
       
-      // Stop camera
       stopCamera();
     }, 'image/jpeg', 0.8);
   };
@@ -201,19 +227,12 @@ const CheckInCheckoutSystem = () => {
     try {
       const formData = new FormData();
       formData.append('image', capturedImage.blob, 'selfie.jpg');
-      formData.append('employeeId', '12345'); // Replace with actual employee ID
+      formData.append('employeeId', '12345');
       formData.append('type', actionType);
       formData.append('latitude', location?.latitude || 0);
       formData.append('longitude', location?.longitude || 0);
       formData.append('address', address);
       formData.append('timestamp', timestamp);
-      
-      // Replace with your actual API endpoint
-      // const response = await fetch('/api/attendance/submit', {
-      //   method: 'POST',
-      //   headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
-      //   body: formData
-      // });
       
       await new Promise(resolve => setTimeout(resolve, 1500));
       
@@ -238,125 +257,111 @@ const CheckInCheckoutSystem = () => {
     stopCamera();
   };
 
-  // Permission Request Screen
   if (step === 'permissions') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-indigo-500 to-purple-600 flex flex-col items-center justify-center p-6">
-        <div className="bg-white rounded-3xl shadow-2xl p-8 max-w-md w-full">
-          <div className="text-center mb-6">
-            <div className="bg-indigo-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Settings className="w-10 h-10 text-indigo-600 animate-spin" style={{ animationDuration: '3s' }} />
+      <div className={styles.container}>
+        <div className={styles.card}>
+          <div className={styles.header}>
+            <div className={styles.iconWrapper}>
+              <Settings className={styles.spinIcon} />
             </div>
-            <h2 className="text-2xl font-bold text-gray-800 mb-2">Permissions Required</h2>
-            <p className="text-gray-600 text-sm">We need access to capture your attendance</p>
+            <h2 className={styles.title}>Permissions Required</h2>
+            <p className={styles.subtitle}>We need access to capture your attendance</p>
           </div>
 
           {error && (
-            <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-6 flex items-start">
-              <AlertCircle className="w-5 h-5 text-red-600 mt-0.5 mr-3 flex-shrink-0" />
-              <p className="text-red-800 text-sm">{error}</p>
+            <div className={styles.errorBox}>
+              <AlertCircle className={styles.errorIcon} />
+              <p className={styles.errorText}>{error}</p>
             </div>
           )}
 
-          <div className="space-y-4 mb-6">
-            <div className={`border-2 rounded-xl p-4 transition-all ${
-              permissionStatus.camera === 'granted' ? 'border-green-500 bg-green-50' :
-              permissionStatus.camera === 'denied' ? 'border-red-500 bg-red-50' :
-              'border-gray-300 bg-white'
+          <div className={styles.permissionsList}>
+            <div className={`${styles.permissionItem} ${
+              permissionStatus.camera === 'granted' ? styles.granted :
+              permissionStatus.camera === 'denied' ? styles.denied : ''
             }`}>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <div className={`w-12 h-12 rounded-full flex items-center justify-center ${
-                    permissionStatus.camera === 'granted' ? 'bg-green-500' :
-                    permissionStatus.camera === 'denied' ? 'bg-red-500' :
-                    'bg-gray-300'
+              <div className={styles.permissionContent}>
+                <div className={styles.permissionInfo}>
+                  <div className={`${styles.permissionIconWrapper} ${
+                    permissionStatus.camera === 'granted' ? styles.granted :
+                    permissionStatus.camera === 'denied' ? styles.denied : ''
                   }`}>
-                    <Camera className="w-6 h-6 text-white" />
+                    <Camera className={styles.permissionIcon} />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-gray-800">Camera</h3>
-                    <p className="text-xs text-gray-600">Required for selfie</p>
+                    <h3 className={styles.permissionName}>Camera</h3>
+                    <p className={styles.permissionDesc}>Required for selfie</p>
                   </div>
                 </div>
                 {permissionStatus.camera === 'granted' && (
-                  <CheckCircle className="w-6 h-6 text-green-500" />
+                  <CheckCircle className={styles.statusIconGranted} />
                 )}
                 {permissionStatus.camera === 'denied' && (
-                  <XCircle className="w-6 h-6 text-red-500" />
+                  <XCircle className={styles.statusIconDenied} />
                 )}
               </div>
             </div>
 
-            <div className={`border-2 rounded-xl p-4 transition-all ${
-              permissionStatus.location === 'granted' ? 'border-green-500 bg-green-50' :
-              permissionStatus.location === 'denied' ? 'border-red-500 bg-red-50' :
-              'border-gray-300 bg-white'
+            <div className={`${styles.permissionItem} ${
+              permissionStatus.location === 'granted' ? styles.granted :
+              permissionStatus.location === 'denied' ? styles.denied : ''
             }`}>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <div className={`w-12 h-12 rounded-full flex items-center justify-center ${
-                    permissionStatus.location === 'granted' ? 'bg-green-500' :
-                    permissionStatus.location === 'denied' ? 'bg-red-500' :
-                    'bg-gray-300'
+              <div className={styles.permissionContent}>
+                <div className={styles.permissionInfo}>
+                  <div className={`${styles.permissionIconWrapper} ${
+                    permissionStatus.location === 'granted' ? styles.granted :
+                    permissionStatus.location === 'denied' ? styles.denied : ''
                   }`}>
-                    <MapPin className="w-6 h-6 text-white" />
+                    <MapPin className={styles.permissionIcon} />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-gray-800">Location</h3>
-                    <p className="text-xs text-gray-600">Required for address</p>
+                    <h3 className={styles.permissionName}>Location</h3>
+                    <p className={styles.permissionDesc}>Required for address</p>
                   </div>
                 </div>
                 {permissionStatus.location === 'granted' && (
-                  <CheckCircle className="w-6 h-6 text-green-500" />
+                  <CheckCircle className={styles.statusIconGranted} />
                 )}
                 {permissionStatus.location === 'denied' && (
-                  <XCircle className="w-6 h-6 text-red-500" />
+                  <XCircle className={styles.statusIconDenied} />
                 )}
               </div>
             </div>
           </div>
 
-          <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-6">
-            <p className="text-sm text-blue-800">
+          <div className={styles.tipBox}>
+            <p className={styles.tipText}>
               <strong>👆 Tip:</strong> When browser asks, click <strong>"Allow"</strong> to grant permissions.
             </p>
           </div>
 
-          <div className="space-y-3">
+          <div className={styles.buttonGroup}>
             <button
               onClick={handleRequestBothPermissions}
               disabled={isLoading}
-              className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 px-6 rounded-xl flex items-center justify-center space-x-3 transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
+              className={styles.primaryButton}
             >
-              <Settings className="w-5 h-5" />
+              <Settings />
               <span>{isLoading ? 'Requesting...' : 'Grant Permissions'}</span>
             </button>
 
-            <button
-              onClick={resetFlow}
-              className="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-3 px-6 rounded-xl transition-all"
-            >
+            <button onClick={resetFlow} className={styles.secondaryButton}>
               Cancel
             </button>
           </div>
 
           {(permissionStatus.camera === 'denied' || permissionStatus.location === 'denied') && (
-            <div className="mt-6 bg-yellow-50 border border-yellow-200 rounded-xl p-4">
-              <p className="text-sm text-yellow-800 mb-2">
+            <div className={styles.warningBox}>
+              <p className={styles.warningTitle}>
                 <strong>⚠️ Permission Denied?</strong>
               </p>
-              <p className="text-xs text-yellow-700 mb-2">
+              <p className={styles.warningText}>
                 Click the <strong>lock icon</strong> or <strong>info icon</strong> in your browser's address bar, then enable Camera and Location.
               </p>
-              <button
-                onClick={handleRequestBothPermissions}
-                className="text-xs text-yellow-900 underline font-semibold"
-              >
+              <button onClick={handleRequestBothPermissions} className={styles.tryAgainButton}>
                 Try Again
               </button>
-              <br /><br /><br /><br />
-              <br /><br /><br /><br />
-              <br /><br /><br /><br />
             </div>
           )}
         </div>
@@ -364,34 +369,27 @@ const CheckInCheckoutSystem = () => {
     );
   }
 
-  // Initial Screen
   if (step === 'initial') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-500 to-purple-600 flex flex-col items-center justify-center p-6">
-        <div className="bg-white rounded-3xl shadow-2xl p-8 max-w-md w-full">
-          <div className="text-center mb-8">
-            <div className="bg-blue-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Clock className="w-10 h-10 text-blue-600" />
+      <div className={styles.container}>
+        <div className={styles.card}>
+          <div className={styles.header}>
+            <div className={styles.iconWrapper}>
+              <Clock />
             </div>
-            <h1 className="text-3xl font-bold text-gray-800 mb-2">Attendance</h1>
-            <p className="text-gray-600">Mark your attendance with a selfie</p>
+            <h1 className={styles.mainTitle}>Attendance</h1>
+            <p className={styles.subtitle}>Mark your attendance with a selfie</p>
           </div>
           
-          <div className="space-y-4">
-            <button
-              onClick={() => handleStartAction('check_in')}
-              className="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-4 px-6 rounded-xl flex items-center justify-center space-x-3 transition-all transform hover:scale-105 shadow-lg"
-            >
-              <CheckCircle className="w-6 h-6" />
-              <span className="text-lg">Check In</span>
+          <div className={styles.buttonGroup}>
+            <button onClick={() => handleStartAction('check_in')} className={styles.checkInButton}>
+              <CheckCircle />
+              <span>Check In</span>
             </button>
             
-            <button
-              onClick={() => handleStartAction('check_out')}
-              className="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-4 px-6 rounded-xl flex items-center justify-center space-x-3 transition-all transform hover:scale-105 shadow-lg"
-            >
-              <XCircle className="w-6 h-6" />
-              <span className="text-lg">Check Out</span>
+            <button onClick={() => handleStartAction('check_out')} className={styles.checkOutButton}>
+              <XCircle />
+              <span>Check Out</span>
             </button>
           </div>
         </div>
@@ -399,85 +397,60 @@ const CheckInCheckoutSystem = () => {
     );
   }
 
-  // Camera Screen
   if (step === 'camera') {
     return (
-      <div className="fixed inset-0 bg-black z-50 flex flex-col">
-        <div className="flex-1 relative">
-          <video
-            ref={videoRef}
-            autoPlay
-            playsInline
-            className="w-full h-full object-cover"
-          />
+      <div className={styles.fullscreen}>
+        <div className={styles.videoContainer}>
+          <video ref={videoRef} autoPlay playsInline className={styles.video} />
           
-          <div className="absolute top-0 left-0 right-0 bg-gradient-to-b from-black/60 to-transparent p-6">
-            <h2 className="text-white text-xl font-bold text-center">
+          <div className={styles.topOverlay}>
+            <h2 className={styles.cameraTitle}>
               {actionType === 'check_in' ? 'Check In' : 'Check Out'}
             </h2>
           </div>
           
-          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-6">
-            <div className="text-white text-sm mb-4 space-y-1">
-              <div className="flex items-center">
-                <MapPin className="w-4 h-4 mr-2" />
+          <div className={styles.bottomOverlay}>
+            <div className={styles.infoBox}>
+              <div className={styles.infoItem}>
+                <MapPin className={styles.infoIcon} />
                 <span>{address}</span>
               </div>
-              <div className="flex items-center">
-                <Clock className="w-4 h-4 mr-2" />
+              <div className={styles.infoItem}>
+                <Clock className={styles.infoIcon} />
                 <span>{new Date(timestamp).toLocaleString()}</span>
               </div>
             </div>
           </div>
         </div>
         
-        <div className="bg-black p-6 flex justify-center space-x-4">
-          <button
-            onClick={resetFlow}
-            className="bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-8 rounded-full transition-all"
-          >
+        <div className={styles.cameraControls}>
+          <button onClick={resetFlow} className={styles.cancelButton}>
             Cancel
           </button>
-          <button
-            onClick={capturePhoto}
-            className="bg-white hover:bg-gray-100 text-black font-bold py-3 px-8 rounded-full flex items-center space-x-2 transition-all shadow-lg"
-          >
-            <Camera className="w-5 h-5" />
+          <button onClick={capturePhoto} className={styles.captureButton}>
+            <Camera />
             <span>Capture</span>
           </button>
         </div>
         
-        <canvas ref={canvasRef} className="hidden" />
+        <canvas ref={canvasRef} className={styles.hiddenCanvas} />
       </div>
     );
   }
 
-  // Preview Screen
   if (step === 'preview') {
     return (
-      <div className="fixed inset-0 bg-black z-50 flex flex-col">
-        <div className="flex-1 relative">
-          <img
-            src={capturedImage?.url}
-            alt="Captured selfie"
-            className="w-full h-full object-contain"
-          />
+      <div className={styles.fullscreen}>
+        <div className={styles.previewContainer}>
+          <img src={capturedImage?.url} alt="Captured selfie" className={styles.previewImage} />
         </div>
         
-        <div className="bg-black p-6 flex justify-center space-x-4">
-          <button
-            onClick={handleRetake}
-            disabled={isLoading}
-            className="bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-8 rounded-full transition-all disabled:opacity-50"
-          >
+        <div className={styles.cameraControls}>
+          <button onClick={handleRetake} disabled={isLoading} className={styles.cancelButton}>
             Retake
           </button>
-          <button
-            onClick={handleSubmit}
-            disabled={isLoading}
-            className="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-8 rounded-full flex items-center space-x-2 transition-all shadow-lg disabled:opacity-50"
-          >
-            <CheckCircle className="w-5 h-5" />
+          <button onClick={handleSubmit} disabled={isLoading} className={styles.confirmButton}>
+            <CheckCircle />
             <span>{isLoading ? 'Submitting...' : 'Confirm'}</span>
           </button>
         </div>
@@ -485,21 +458,22 @@ const CheckInCheckoutSystem = () => {
     );
   }
 
-  // Success Screen
   if (step === 'success') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-green-500 to-emerald-600 flex flex-col items-center justify-center p-6">
-        <div className="bg-white rounded-3xl shadow-2xl p-8 max-w-md w-full text-center">
-          <div className="bg-green-100 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6">
-            <CheckCircle className="w-12 h-12 text-green-600" />
+      <div className={styles.successContainer}>
+        <div className={styles.card}>
+          <div className={styles.successContent}>
+            <div className={styles.successIconWrapper}>
+              <CheckCircle className={styles.successIcon} />
+            </div>
+            <h2 className={styles.successTitle}>Success!</h2>
+            <p className={styles.successMessage}>
+              {actionType === 'check_in' ? 'Check-in' : 'Check-out'} recorded successfully
+            </p>
+            <p className={styles.successTime}>
+              {new Date(timestamp).toLocaleString()}
+            </p>
           </div>
-          <h2 className="text-3xl font-bold text-gray-800 mb-4">Success!</h2>
-          <p className="text-gray-600 mb-2">
-            {actionType === 'check_in' ? 'Check-in' : 'Check-out'} recorded successfully
-          </p>
-          <p className="text-sm text-gray-500">
-            {new Date(timestamp).toLocaleString()}
-          </p>
         </div>
       </div>
     );
@@ -507,5 +481,522 @@ const CheckInCheckoutSystem = () => {
 
   return null;
 };
+
+// SCSS Module (CheckInCheckout.module.scss)
+const scssContent = `
+.container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+}
+
+.successContainer {
+  @extend .container;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+}
+
+.card {
+  background: white;
+  border-radius: 1.5rem;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  padding: 2rem;
+  max-width: 28rem;
+  width: 100%;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.iconWrapper {
+  background: #e0e7ff;
+  width: 5rem;
+  height: 5rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem;
+
+  svg {
+    width: 2.5rem;
+    height: 2.5rem;
+    color: #4f46e5;
+  }
+}
+
+.spinIcon {
+  animation: spin 3s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #1f2937;
+  margin-bottom: 0.5rem;
+}
+
+.mainTitle {
+  font-size: 1.875rem;
+  font-weight: bold;
+  color: #1f2937;
+  margin-bottom: 0.5rem;
+}
+
+.subtitle {
+  color: #6b7280;
+  font-size: 0.875rem;
+}
+
+.errorBox {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 0.75rem;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: flex-start;
+}
+
+.errorIcon {
+  width: 1.25rem;
+  height: 1.25rem;
+  color: #dc2626;
+  margin-top: 0.125rem;
+  margin-right: 0.75rem;
+  flex-shrink: 0;
+}
+
+.errorText {
+  color: #991b1b;
+  font-size: 0.875rem;
+}
+
+.permissionsList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.permissionItem {
+  border: 2px solid #d1d5db;
+  border-radius: 0.75rem;
+  padding: 1rem;
+  background: white;
+  transition: all 0.3s;
+
+  &.granted {
+    border-color: #10b981;
+    background: #f0fdf4;
+  }
+
+  &.denied {
+    border-color: #ef4444;
+    background: #fef2f2;
+  }
+}
+
+.permissionContent {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.permissionInfo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.permissionIconWrapper {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #d1d5db;
+
+  &.granted {
+    background: #10b981;
+  }
+
+  &.denied {
+    background: #ef4444;
+  }
+}
+
+.permissionIcon {
+  width: 1.5rem;
+  height: 1.5rem;
+  color: white;
+}
+
+.permissionName {
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.permissionDesc {
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+.statusIconGranted {
+  width: 1.5rem;
+  height: 1.5rem;
+  color: #10b981;
+}
+
+.statusIconDenied {
+  width: 1.5rem;
+  height: 1.5rem;
+  color: #ef4444;
+}
+
+.tipBox {
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 0.75rem;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.tipText {
+  font-size: 0.875rem;
+  color: #1e40af;
+}
+
+.buttonGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.primaryButton {
+  width: 100%;
+  background: #4f46e5;
+  color: white;
+  font-weight: bold;
+  padding: 1rem 1.5rem;
+  border-radius: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  transition: all 0.3s;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+
+  &:hover:not(:disabled) {
+    background: #4338ca;
+    transform: scale(1.05);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  svg {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+}
+
+.secondaryButton {
+  width: 100%;
+  background: #e5e7eb;
+  color: #374151;
+  font-weight: 600;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.75rem;
+  transition: all 0.3s;
+  border: none;
+  cursor: pointer;
+
+  &:hover {
+    background: #d1d5db;
+  }
+}
+
+.checkInButton {
+  width: 100%;
+  background: #10b981;
+  color: white;
+  font-weight: bold;
+  padding: 1rem 1.5rem;
+  border-radius: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  transition: all 0.3s;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  font-size: 1.125rem;
+
+  &:hover {
+    background: #059669;
+    transform: scale(1.05);
+  }
+
+  svg {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+}
+
+.checkOutButton {
+  @extend .checkInButton;
+  background: #ef4444;
+
+  &:hover {
+    background: #dc2626;
+  }
+}
+
+.warningBox {
+  margin-top: 1.5rem;
+  background: #fef3c7;
+  border: 1px solid #fcd34d;
+  border-radius: 0.75rem;
+  padding: 1rem;
+}
+
+.warningTitle {
+  font-size: 0.875rem;
+  color: #92400e;
+  margin-bottom: 0.5rem;
+}
+
+.warningText {
+  font-size: 0.75rem;
+  color: #b45309;
+  margin-bottom: 0.5rem;
+}
+
+.tryAgainButton {
+  font-size: 0.75rem;
+  color: #78350f;
+  text-decoration: underline;
+  font-weight: 600;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.fullscreen {
+  position: fixed;
+  inset: 0;
+  background: black;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+}
+
+.videoContainer {
+  flex: 1;
+  position: relative;
+}
+
+.video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.topOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.6), transparent);
+  padding: 1.5rem;
+}
+
+.cameraTitle {
+  color: white;
+  font-size: 1.25rem;
+  font-weight: bold;
+  text-align: center;
+}
+
+.bottomOverlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+  padding: 1.5rem;
+}
+
+.infoBox {
+  color: white;
+  font-size: 0.875rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.infoItem {
+  display: flex;
+  align-items: center;
+}
+
+.infoIcon {
+  width: 1rem;
+  height: 1rem;
+  margin-right: 0.5rem;
+}
+
+.cameraControls {
+  background: black;
+  padding: 1.5rem;
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.cancelButton {
+  background: #4b5563;
+  color: white;
+  font-weight: bold;
+  padding: 0.75rem 2rem;
+  border-radius: 9999px;
+  transition: all 0.3s;
+  border: none;
+  cursor: pointer;
+
+  &:hover:not(:disabled) {
+    background: #374151;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.captureButton {
+  background: white;
+  color: black;
+  font-weight: bold;
+  padding: 0.75rem 2rem;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.3s;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+
+  &:hover {
+    background: #f3f4f6;
+  }
+
+  svg {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+}
+
+.confirmButton {
+  background: #10b981;
+  color: white;
+  font-weight: bold;
+  padding: 0.75rem 2rem;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.3s;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+
+  &:hover:not(:disabled) {
+    background: #059669;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  svg {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+}
+
+.hiddenCanvas {
+  display: none;
+}
+
+.previewContainer {
+  flex: 1;
+  position: relative;
+}
+
+.previewImage {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.successContent {
+  text-align: center;
+}
+
+.successIconWrapper {
+  background: #d1fae5;
+  width: 6rem;
+  height: 6rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem;
+}
+
+.successIcon {
+  width: 3rem;
+  height: 3rem;
+  color: #10b981;
+}
+
+.successTitle {
+  font-size: 1.875rem;
+  font-weight: bold;
+  color: #1f2937;
+  margin-bottom: 1rem;
+}
+
+.successMessage {
+  color: #6b7280;
+  margin-bottom: 0.5rem;
+}
+
+.successTime {
+  font-size: 0.875rem;
+  color: #9ca3af;
+}
+`;
 
 export default CheckInCheckoutSystem;
